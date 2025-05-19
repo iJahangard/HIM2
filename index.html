@@ -1,0 +1,144 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منابع یادگیری الکترونیکی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .btn {
+      transition: all 0.3s ease;
+      transform: scale(1);
+    }
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-10">
+  <div class="max-w-4xl w-full bg-white rounded-2xl shadow-xl p-8">
+    <h1 class="text-4xl font-bold text-center text-indigo-600 mb-6">منابع یادگیری الکترونیکی</h1>
+    <p class="text-center text-gray-600 mb-8">منابع پیشنهادی برای یادگیری آنلاین، از پلتفرم‌های جهانی تا ابزارهای ایرانی</p>
+
+    <!-- Global Platforms -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">پلتفرم‌های جهانی</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="https://www.coursera.org/" target="_blank" class="btn bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg py-3 px-4 text-center hover:from-indigo-600 hover:to-purple-600">Coursera</a>
+        <a href="https://www.udemy.com/" target="_blank" class="btn bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg py-3 px-4 text-center hover:from-indigo-600 hover:to-purple-600">Udemy</a>
+        <a href="https://www.khanacademy.org/" target="_blank" class="btn bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg py-3 px-4 text-center hover:from-indigo-600 hover:to-purple-600">Khan Academy</a>
+        <a href="https://www.edx.org/" target="_blank" class="btn bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg py-3 px-4 text-center hover:from-indigo-600 hover:to-purple-600">edX</a>
+      </div>
+    </section>
+
+    <!-- Iranian Platforms -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">پلتفرم‌های ایرانی</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="https://maktabkhooneh.org/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">مکتب‌خونه</a>
+        <a href="https://faranesh.com/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">فرانش</a>
+        <a href="https://danap.ir/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">داناپ</a>
+        <a href="https://classeh.com/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">کلاسه</a>
+        <a href="https://sabzlearn.ir/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">سبزلرن (آکادمی برنامه‌نویسی)</a>
+        <a href="https://quera.org/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">کوئرا (آموزش برنامه‌نویسی)</a>
+        <a href="https://b-amooz.com/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">B-Amooz (آموزش زبان‌های خارجی)</a>
+        <a href="https://zabanshenas.com/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">زبانشناس (آموزش زبان انگلیسی)</a>
+        <a href="https://www.tahlilgaran.org/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">تحلیلگران (آموزش زبان انگلیسی)</a>
+        <a href="https://git.ir/" target="_blank" class="btn bg-gradient-to-r from-teal-500 to-green-500 text-white rounded-lg py-3 px-4 text-center hover:from-teal-600 hover:to-green-600">Git.ir (آموزش آنلاین)</a>
+      </div>
+    </section>
+
+    <!-- Mobile Apps -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">اپلیکیشن‌های موبایل</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="https://www.duolingo.com/" target="_blank" class="btn bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg py-3 px-4 text-center hover:from-orange-600 hover:to-red-600">Duolingo</a>
+        <a href="https://www.quizlet.com/" target="_blank" class="btn bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg py-3 px-4 text-center hover:from-orange-600 hover:to-red-600">Quizlet</a>
+        
+        <a href="https://liteman.ir/" target="_blank" class="btn bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg py-3 px-4 text-center hover:from-orange-600 hover:to-red-600">Liteman (ابزار فلش‌کارت)</a>
+      </div>
+    </section>
+
+    <!-- Interactive Tools -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">ابزارهای تعاملی</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="https://zoom.us/" target="_blank" class="btn bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg py-3 px-4 text-center hover:from-blue-600 hover:to-cyan-600">Zoom</a>
+        <a href="https://meet.google.com/" target="_blank" class="btn bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg py-3 px-4 text-center hover:from-blue-600 hover:to-cyan-600">Google Meet</a>
+        <a href="https://www.skyroom.online/" target="_blank" class="btn bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg py-3 px-4 text-center hover:from-blue-600 hover:to-cyan-600">SkyRoom</a>
+        <a href="https://classroom.google.com/" target="_blank" class="btn bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg py-3 px-4 text-center hover:from-blue-600 hover:to-cyan-600">Google Classroom</a>
+      </div>
+    </section>
+
+    <!-- Free Resources -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">منابع رایگان</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="https://www.youtube.com/" target="_blank" class="btn bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg py-3 px-4 text-center hover:from-purple-600 hover:to-pink-600">YouTube (کانال‌های آموزشی)</a>
+        <a href="https://www.aparat.com/" target="_blank" class="btn bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg py-3 px-4 text-center hover:from-purple-600 hover:to-pink-600">آپارات (کانال‌های آموزشی)</a>
+        <a href="https://taaghche.com/" target="_blank" class="btn bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg py-3 px-4 text-center hover:from-purple-600 hover:to-pink-600">طاقچه (فروشگاه کتاب‌های الکترونیکی)</a>
+      </div>
+    </section>
+
+    <!-- Health IT and Disease Coding Tools -->
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">ابزارهای فناوری اطلاعات سلامت و کدگذاری بیماری</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="https://icdcodes.ai/" target="_blank" class="btn bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg py-3 px-4 text-center hover:from-blue-600 hover:to-indigo-600">ICD Codes AI (کدگذاری ICD-10)</a>
+      </div>
+    </section>
+	
+
+    <footer class="text-center text-gray-500 mt-8">
+      <p>برای شروع یادگیری، یکی از این منابع را امتحان کنید!</p>
+      <p class="mt-2">تهیه‌شده توسط امیرحسین جهانگرد - ۱۴۰۴</p>
+    </footer>
+  </div>
+
+  <!-- Google Fonts for Vazirmatn -->
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+</body>
+</html>
